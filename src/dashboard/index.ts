@@ -149,7 +149,7 @@ async function startJob() {
     selection.map((p) => p.id),
     { dryRun: $<HTMLInputElement>('dry-run').checked, minDelayMs: Number($<HTMLSelectElement>('pace').value) },
   )
-  await send({ type: 'clearpost:start' })
+  await send({ type: 'cleartweet:start' })
   render(await getJob())
 }
 
@@ -252,9 +252,9 @@ $('start').addEventListener('click', startJob)
 
 $('toggle').addEventListener('click', () => {
   const active = currentJob?.status === 'running' || currentJob?.status === 'waiting'
-  send({ type: active ? 'clearpost:pause' : 'clearpost:resume' })
+  send({ type: active ? 'cleartweet:pause' : 'cleartweet:resume' })
 })
-$('retry').addEventListener('click', () => send({ type: 'clearpost:retry_failed' }))
+$('retry').addEventListener('click', () => send({ type: 'cleartweet:retry_failed' }))
 $('reset').addEventListener('click', async (e) => {
   const button = e.currentTarget as HTMLButtonElement
   if (currentJob?.status !== 'done' && button.dataset.armed !== 'true') {
@@ -267,7 +267,7 @@ $('reset').addEventListener('click', async (e) => {
     return
   }
   button.dataset.armed = ''
-  await send({ type: 'clearpost:cancel' })
+  await send({ type: 'cleartweet:cancel' })
 })
 
 onJobChange(render)

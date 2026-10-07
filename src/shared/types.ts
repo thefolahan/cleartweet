@@ -63,9 +63,9 @@ export type DeleteResult =
   | { kind: 'error'; status?: number; message: string; rate: RateInfo }
 
 export type ContentRequest =
-  | { type: 'clearpost:ping' }
-  | { type: 'clearpost:scripts' }
-  | { type: 'clearpost:delete'; id: string; queryId: string }
+  | { type: 'cleartweet:ping' }
+  | { type: 'cleartweet:scripts' }
+  | { type: 'cleartweet:delete'; id: string; queryId: string }
 
 export interface PingReply {
   ok: true
@@ -73,8 +73,8 @@ export interface PingReply {
 }
 
 export type BackgroundRequest =
-  | { type: 'clearpost:start' }
-  | { type: 'clearpost:pause' }
-  | { type: 'clearpost:resume' }
-  | { type: 'clearpost:cancel' }
-  | { type: 'clearpost:retry_failed' }
+  | { type: 'cleartweet:start' }
+  | { type: 'cleartweet:pause' }
+  | { type: 'cleartweet:resume' }
+  | { type: 'cleartweet:cancel' }
+  | { type: 'cleartweet:retry_failed' }

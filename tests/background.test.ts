@@ -58,7 +58,7 @@ afterEach(() => vi.useRealTimers())
 describe('background run loop', () => {
   it('works through the queue and finishes', async () => {
     await setup(['1', '2', '3'])
-    await message('clearpost:start')
+    await message('cleartweet:start')
     results.push({ kind: 'deleted', rate: {} }, { kind: 'gone', rate: {} }, { kind: 'deleted', rate: {} })
     await vi.advanceTimersByTimeAsync(10_000)
     expect(job()).toMatchObject({ status: 'done', cursor: 3, deleted: 2, alreadyGone: 1, failed: 0, queryId: 'QUERY' })
@@ -68,14 +68,14 @@ describe('background run loop', () => {
     await setup(['1', '2'])
     const resetAt = Date.now() + 15 * 60_000
     results.push({ kind: 'rate_limited', rate: { limit: 50, remaining: 0, resetAt } })
-    await message('clearpost:start')
+    await message('cleartweet:start')
     await vi.advanceTimersByTimeAsync(100)
 
     expect(job()).toMatchObject({ status: 'waiting', cursor: 0, consecutive429: 1 })
-    expect(alarms.get('clearpost:resume')).toBeGreaterThan(resetAt)
+    expect(alarms.get('cleartweet:resume')).toBeGreaterThan(resetAt)
 
-    vi.setSystemTime(alarms.get('clearpost:resume')!)
-    onAlarm({ name: 'clearpost:resume' })
+    vi.setSystemTime(alarms.get('cleartweet:resume')!)
+    onAlarm({ name: 'cleartweet:resume' })
     await vi.advanceTimersByTimeAsync(10_000)
     expect(job()).toMatchObject({ status: 'done', deleted: 2 })
   })
@@ -83,9 +83,9 @@ describe('background run loop', () => {
   it('ignores an early wake up', async () => {
     await setup(['1', '2'])
     results.push({ kind: 'rate_limited', rate: { resetAt: Date.now() + 60 * 60_000 } })
-    await message('clearpost:start')
+    await message('cleartweet:start')
     await vi.advanceTimersByTimeAsync(100)
-    onAlarm({ name: 'clearpost:resume' })
+    onAlarm({ name: 'cleartweet:resume' })
     await vi.advanceTimersByTimeAsync(100)
     expect(job()).toMatchObject({ status: 'waiting', cursor: 0 })
   })
@@ -93,11 +93,11 @@ describe('background run loop', () => {
   it('retries errors with backoff, then skips the post and records it', async () => {
     await setup(['1', '2'])
     for (let i = 0; i < 4; i++) results.push({ kind: 'error', message: 'HTTP 500', rate: {} })
-    await message('clearpost:start')
+    await message('cleartweet:start')
     await vi.advanceTimersByTimeAsync(20_000)
     for (let i = 0; i < 3 && job().status === 'waiting'; i++) {
-      vi.setSystemTime(alarms.get('clearpost:resume')!)
-      onAlarm({ name: 'clearpost:resume' })
+      vi.setSystemTime(alarms.get('cleartweet:resume')!)
+      onAlarm({ name: 'cleartweet:resume' })
       await vi.advanceTimersByTimeAsync(20_000)
     }
     expect(job()).toMatchObject({ status: 'done', failed: 1, failedIds: ['1'], deleted: 1 })
@@ -106,7 +106,7 @@ describe('background run loop', () => {
   it('stops on an auth problem and keeps its place', async () => {
     await setup(['1', '2'])
     results.push({ kind: 'auth', status: 401, message: 'X refused the request (401).', rate: {} })
-    await message('clearpost:start')
+    await message('cleartweet:start')
     await vi.advanceTimersByTimeAsync(5000)
     expect(job()).toMatchObject({ status: 'error', cursor: 0, lastError: 'X refused the request (401).' })
   })
@@ -115,7 +115,7 @@ describe('background run loop', () => {
     const tabs = await import('../src/background/tabs')
     await setup(['1'])
     results.push({ kind: 'stale_query', rate: {} })
-    await message('clearpost:start')
+    await message('cleartweet:start')
     await vi.advanceTimersByTimeAsync(5000)
     expect(tabs.discoverDeleteQueryId).toHaveBeenCalledTimes(2)
     expect(job()).toMatchObject({ status: 'done', deleted: 1 })
@@ -123,9 +123,9 @@ describe('background run loop', () => {
 
   it('pauses without losing a request that was in flight', async () => {
     await setup(['1', '2', '3'])
-    await message('clearpost:start')
+    await message('cleartweet:start')
     await vi.advanceTimersByTimeAsync(10)
-    await message('clearpost:pause')
+    await message('cleartweet:pause')
     const paused = job()
     await vi.advanceTimersByTimeAsync(10_000)
     expect(job()).toMatchObject({ status: 'paused', cursor: paused.cursor })
@@ -135,7 +135,7 @@ describe('background run loop', () => {
   it('does not call X during a dry run', async () => {
     const tabs = await import('../src/background/tabs')
     await setup(['1', '2'], true)
-    await message('clearpost:start')
+    await message('cleartweet:start')
     await vi.advanceTimersByTimeAsync(5000)
     expect(tabs.deleteInTab).not.toHaveBeenCalled()
     expect(job()).toMatchObject({ status: 'done', deleted: 2 })

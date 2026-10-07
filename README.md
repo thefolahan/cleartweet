@@ -1,10 +1,10 @@
-# Clearpost
+# Cleartweet
 
 A Chrome extension that deletes your posts on X using your data archive. It paces itself against the rate limit, so a run of many thousands of posts can go on unattended for hours or days and resume after Chrome restarts.
 
 ## Why it exists
 
-Console scripts such as [tweetXer](https://github.com/lucahammer/tweetXer) delete posts quickly, but X added a stricter rate limit in 2026, so they stall on large accounts. A pasted script also forgets everything when the tab closes. Clearpost keeps its queue in extension storage, reads the rate limit headers on every response, and slows down before it is blocked.
+Console scripts such as [tweetXer](https://github.com/lucahammer/tweetXer) delete posts quickly, but X added a stricter rate limit in 2026, so they stall on large accounts. A pasted script also forgets everything when the tab closes. Cleartweet keeps its queue in extension storage, reads the rate limit headers on every response, and slows down before it is blocked.
 
 ## How it works
 
@@ -33,7 +33,7 @@ npm run build
 
 1. Open `chrome://extensions`, turn on Developer mode, choose **Load unpacked** and select the `dist` folder.
 2. Log in to x.com in the same browser.
-3. Click the Clearpost icon, drop your archive, choose filters and start.
+3. Click the Cleartweet icon, drop your archive, choose filters and start.
 
 Use `npm run watch` while developing and press reload on the extensions page after each change.
 
@@ -45,7 +45,7 @@ Use `npm run watch` while developing and press reload on the extensions page aft
 | `npm run watch` | Rebuild on change with source maps |
 | `npm test` | Run the unit tests |
 | `npm run typecheck` | Type check the project |
-| `npm run zip` | Build and package `clearpost.zip` |
+| `npm run zip` | Build and package `cleartweet.zip` |
 
 ## Project layout
 

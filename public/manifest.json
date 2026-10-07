@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Clearpost",
+  "name": "Cleartweet",
   "version": "0.1.0",
   "description": "Delete your posts on X from your data archive, paced to stay within the rate limit.",
   "action": {
-    "default_title": "Open Clearpost",
+    "default_title": "Open Cleartweet",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png"

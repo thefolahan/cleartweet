@@ -14,7 +14,7 @@ function send<T>(tabId: number, message: ContentRequest): Promise<T> {
 
 async function ping(tabId: number): Promise<PingReply | undefined> {
   try {
-    return await send<PingReply>(tabId, { type: 'clearpost:ping' })
+    return await send<PingReply>(tabId, { type: 'cleartweet:ping' })
   } catch {
     return undefined
   }
@@ -67,7 +67,7 @@ export async function ensureWorkerTab(): Promise<number> {
 }
 
 export function deleteInTab(tabId: number, id: string, queryId: string): Promise<DeleteResult> {
-  return send<DeleteResult>(tabId, { type: 'clearpost:delete', id, queryId })
+  return send<DeleteResult>(tabId, { type: 'cleartweet:delete', id, queryId })
 }
 
 /**
@@ -75,7 +75,7 @@ export function deleteInTab(tabId: number, id: string, queryId: string): Promise
  * is read from the bundles the page has loaded. The last known id is the fallback.
  */
 export async function discoverDeleteQueryId(tabId: number): Promise<string> {
-  const urls = await send<string[]>(tabId, { type: 'clearpost:scripts' }).catch(() => [] as string[])
+  const urls = await send<string[]>(tabId, { type: 'cleartweet:scripts' }).catch(() => [] as string[])
   const ranked = urls
     .filter((u) => u.includes('/responsive-web/'))
     .sort((a, b) => Number(b.includes('/main.')) - Number(a.includes('/main.')))

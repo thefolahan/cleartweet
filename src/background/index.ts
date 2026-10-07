@@ -3,7 +3,7 @@ import { addLog, clearJob, getJob, getQueue, replaceQueue, saveJob } from '../sh
 import type { BackgroundRequest, DeleteResult, Job } from '../shared/types'
 import { deleteInTab, discoverDeleteQueryId, ensureWorkerTab, SessionError } from './tabs'
 
-const ALARM = 'clearpost:resume'
+const ALARM = 'cleartweet:resume'
 // Service workers are stopped after about 30 seconds of quiet, so longer waits go through an alarm.
 const TIMER_LIMIT_MS = 25_000
 const MAX_ATTEMPTS = 4
@@ -59,7 +59,7 @@ async function persist(job: Job): Promise<void> {
 }
 
 function tick(): Promise<void> {
-  return exclusive(step).catch((err) => console.error('[clearpost]', err))
+  return exclusive(step).catch((err) => console.error('[cleartweet]', err))
 }
 
 async function step(): Promise<void> {
@@ -185,7 +185,7 @@ function fail(job: Job, id: string, message: string): void {
 
 async function handle(request: BackgroundRequest): Promise<void> {
   const job = await getJob()
-  if (request.type === 'clearpost:cancel') {
+  if (request.type === 'cleartweet:cancel') {
     stopTimers()
     await clearJob()
     updateBadge(undefined)
@@ -194,15 +194,15 @@ async function handle(request: BackgroundRequest): Promise<void> {
   if (!job) return
 
   switch (request.type) {
-    case 'clearpost:start':
-    case 'clearpost:resume':
+    case 'cleartweet:start':
+    case 'cleartweet:resume':
       if (job.status === 'running' || job.status === 'waiting' || job.status === 'done') return
       job.activeSince = Date.now()
       job.attempt = 0
       addLog(job, 'info', job.cursor === 0 ? `Started${job.dryRun ? ' a dry run' : ''}.` : 'Resumed.')
       schedule(job, 0)
       break
-    case 'clearpost:pause':
+    case 'cleartweet:pause':
       if (job.status !== 'running' && job.status !== 'waiting') return
       stopTimers()
       job.status = 'paused'
@@ -210,7 +210,7 @@ async function handle(request: BackgroundRequest): Promise<void> {
       settleActiveTime(job)
       addLog(job, 'info', 'Paused.')
       break
-    case 'clearpost:retry_failed': {
+    case 'cleartweet:retry_failed': {
       if (!job.failedIds.length) return
       const queue = await getQueue()
       await replaceQueue([...queue, ...job.failedIds])
@@ -227,7 +227,7 @@ async function handle(request: BackgroundRequest): Promise<void> {
 }
 
 chrome.runtime.onMessage.addListener((request: BackgroundRequest, sender, sendResponse) => {
-  if (sender.id !== chrome.runtime.id || !request?.type?.startsWith('clearpost:')) return false
+  if (sender.id !== chrome.runtime.id || !request?.type?.startsWith('cleartweet:')) return false
   exclusive(() => handle(request)).then(
     () => sendResponse({ ok: true }),
     (err) => sendResponse({ ok: false, error: String(err) }),

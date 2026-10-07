@@ -3,22 +3,22 @@ import { deletePost, getCookie } from './x-api'
 
 declare global {
   interface Window {
-    __clearpostLoaded?: boolean
+    __cleartweetLoaded?: boolean
   }
 }
 
 // The background worker may inject this file into a tab that already received it from the manifest.
-if (!window.__clearpostLoaded) {
-  window.__clearpostLoaded = true
+if (!window.__cleartweetLoaded) {
+  window.__cleartweetLoaded = true
 
   chrome.runtime.onMessage.addListener((message: ContentRequest, _sender, sendResponse) => {
     switch (message?.type) {
-      case 'clearpost:ping': {
+      case 'cleartweet:ping': {
         const reply: PingReply = { ok: true, loggedIn: Boolean(getCookie('ct0')) }
         sendResponse(reply)
         return false
       }
-      case 'clearpost:scripts': {
+      case 'cleartweet:scripts': {
         const urls = Array.from(document.scripts, (s) => s.src).filter((src) => src.includes('abs.twimg.com'))
         const preloads = Array.from(document.querySelectorAll<HTMLLinkElement>('link[href*="abs.twimg.com"]'), (l) => l.href)
         const loaded = performance
@@ -28,7 +28,7 @@ if (!window.__clearpostLoaded) {
         sendResponse([...new Set([...urls, ...preloads, ...loaded])].filter((u) => u.endsWith('.js')))
         return false
       }
-      case 'clearpost:delete':
+      case 'cleartweet:delete':
         deletePost(message.id, message.queryId).then(sendResponse)
         return true
     }
