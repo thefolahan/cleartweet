@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Clearpost</title>
+    <link rel="icon" href="icons/icon32.png" />
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div class="brand">
+        <img src="icons/icon48.png" alt="" width="32" height="32" />
+        <div>
+          <h1>Clearpost</h1>
+          <p>Delete your posts on X, paced to stay inside the rate limit.</p>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="setup">
+        <article class="card">
+          <h2><span class="step">1</span> Load your archive</h2>
+          <p class="muted">
+            Request your data at
+            <a href="https://x.com/settings/download_your_data" target="_blank" rel="noreferrer">x.com/settings/download_your_data</a>.
+            X usually takes one or two days. When it arrives, drop the zip here, or the <code>tweets.js</code> file from its
+            <code>data</code> folder.
+          </p>
+          <label id="drop" class="drop">
+            <input id="file" type="file" accept=".zip,.js" multiple hidden />
+            <strong>Drop your archive here</strong>
+            <span>or click to choose a file</span>
+          </label>
+          <p id="load-status" class="muted small" role="status"></p>
+          <p class="note">Your archive is read inside this browser. Nothing is uploaded anywhere.</p>
+        </article>
+
+        <article id="filters-card" class="card" hidden>
+          <h2><span class="step">2</span> Choose what to delete</h2>
+
+          <div class="stats" id="summary"></div>
+          <div class="years" id="years" aria-label="Posts per year"></div>
+          <p id="headers-note" class="note" hidden>
+            This file only lists post ids and dates, so filtering by type, words or likes is unavailable. Use
+            <code>tweets.js</code> for the full set of filters.
+          </p>
+
+          <form id="filters" class="grid">
+            <label>From <input type="date" name="from" /></label>
+            <label>Until <input type="date" name="to" /></label>
+
+            <fieldset class="full rich">
+              <legend>Types</legend>
+              <label class="check"><input type="checkbox" name="post" checked /> Posts</label>
+              <label class="check"><input type="checkbox" name="reply" checked /> Replies</label>
+              <label class="check"><input type="checkbox" name="repost" checked /> Reposts</label>
+            </fieldset>
+
+            <label class="full rich">
+              Keep posts that contain any of these words
+              <input type="text" name="keepWords" placeholder="launch, hired, thank you" />
+            </label>
+            <label class="rich">
+              Keep posts with at least this many likes
+              <input type="number" name="keepLikes" min="0" placeholder="No limit" />
+            </label>
+            <label>
+              Order
+              <select name="order">
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+              </select>
+            </label>
+            <label class="full">
+              Never delete these posts (paste links or ids)
+              <textarea name="keepIds" rows="2" placeholder="https://x.com/you/status/1234567890"></textarea>
+            </label>
+          </form>
+
+          <div class="preview">
+            <p id="selected-count" class="count"></p>
+            <ul id="sample" class="sample"></ul>
+          </div>
+
+          <div class="grid options">
+            <label>
+              Pace
+              <select id="pace">
+                <option value="3000">Gentle, one every 3 seconds at most</option>
+                <option value="1000" selected>Normal, one per second at most</option>
+                <option value="300">Fast, about three per second at most</option>
+              </select>
+            </label>
+            <label class="check"><input type="checkbox" id="dry-run" /> Dry run (walk through the list without deleting)</label>
+            <label class="check full"><input type="checkbox" id="confirm" /> I understand that deleted posts cannot be recovered.</label>
+          </div>
+
+          <button id="start" class="primary" disabled>Start deleting</button>
+        </article>
+      </section>
+
+      <section id="run" hidden>
+        <article class="card">
+          <div class="run-head">
+            <h2 id="run-title">Deleting</h2>
+            <span id="run-state" class="pill"></span>
+          </div>
+          <div class="bar"><div id="bar-fill"></div></div>
+          <p id="run-detail" class="muted"></p>
+
+          <div class="stats" id="run-stats"></div>
+
+          <dl class="facts" id="facts"></dl>
+
+          <div class="actions">
+            <button id="toggle" class="primary">Pause</button>
+            <button id="retry" hidden>Retry failed posts</button>
+            <button id="reset" class="ghost">Start over</button>
+          </div>
+          <p class="note">Keep Chrome open. The X tab can stay in the background, and a closed browser picks up where it stopped.</p>
+        </article>
+
+        <article class="card">
+          <h2>Activity</h2>
+          <ol id="log" class="log"></ol>
+        </article>
+      </section>
+    </main>
+
+    <script type="module" src="dashboard.js"></script>
+  </body>
+</html>
