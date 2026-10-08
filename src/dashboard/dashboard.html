@@ -8,12 +8,13 @@
     <link rel="stylesheet" href="dashboard.css" />
   </head>
   <body>
+    <div class="orbs" aria-hidden="true"><div></div><div></div><div></div></div>
     <header class="top">
       <div class="brand">
-        <img src="icons/icon48.png" alt="" width="32" height="32" />
+        <img src="icons/icon48.png" alt="" width="28" height="28" />
         <div>
           <h1>Cleartweet</h1>
-          <p>Delete your posts on X, paced to stay inside the rate limit.</p>
+          <p>Deletes your tweets on X from your data archive.</p>
         </div>
       </div>
     </header>
@@ -21,7 +22,7 @@
     <main>
       <section id="setup">
         <article class="card">
-          <h2><span class="step">1</span> Load your archive</h2>
+          <h2><span class="step">01</span> Load your archive</h2>
           <p class="muted">
             Request your data at
             <a href="https://x.com/settings/download_your_data" target="_blank" rel="noreferrer">x.com/settings/download_your_data</a>.
@@ -38,7 +39,7 @@
         </article>
 
         <article id="filters-card" class="card" hidden>
-          <h2><span class="step">2</span> Choose what to delete</h2>
+          <h2><span class="step">02</span> Choose what to delete</h2>
 
           <div class="stats" id="summary"></div>
           <div class="years" id="years" aria-label="Posts per year"></div>

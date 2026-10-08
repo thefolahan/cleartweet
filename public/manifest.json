@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Cleartweet",
   "version": "0.1.0",
-  "description": "Delete your posts on X from your data archive, paced to stay within the rate limit.",
+  "description": "Deletes your tweets on X from your data archive.",
   "action": {
     "default_title": "Open Cleartweet",
     "default_icon": {

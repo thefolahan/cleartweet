@@ -1,4 +1,4 @@
-// Draws the toolbar icon (a card whose lines of text fade away) without any image dependencies.
+// Draws the toolbar icon (lines of text whose last line breaks into dots) without any image dependencies.
 import { writeFileSync } from 'node:fs'
 import { deflateSync } from 'node:zlib'
 
@@ -30,26 +30,31 @@ function roundedBox(x, y, cx, cy, hw, hh, r) {
 function render(size) {
   const px = Buffer.alloc(size * size * 4)
   const s = size / 128
-  const lines = [
-    { y: 44, w: 30, a: 1 },
-    { y: 64, w: 22, a: 0.6 },
-    { y: 84, w: 14, a: 0.28 },
+  // Two lines of text, then the third breaking up into dots as it is cleared.
+  const bars = [
+    { x0: 32, x1: 96, y: 46 },
+    { x0: 32, x1: 78, y: 64 },
+  ]
+  const dots = [
+    { x: 38, r: 6.5 },
+    { x: 58, r: 5 },
+    { x: 75, r: 3.5 },
   ]
   for (let j = 0; j < size; j++) {
     for (let i = 0; i < size; i++) {
       const x = (i + 0.5) / s
       const y = (j + 0.5) / s
-      const aa = 1 / s
-      const bg = Math.min(1, Math.max(0, 0.5 - roundedBox(x, y, 64, 64, 60, 60, 28) / aa))
+      const aa = Math.max(1 / s, 1)
+      const cover = (d) => Math.min(1, Math.max(0, 0.5 - d / aa))
+      const bg = cover(roundedBox(x, y, 64, 64, 60, 60, 30))
       let white = 0
-      for (const l of lines) {
-        const d = roundedBox(x, y, 64 - (30 - l.w), l.y, l.w, 6, 6)
-        white = Math.max(white, Math.min(1, Math.max(0, 0.5 - d / aa)) * l.a)
-      }
+      for (const b of bars) white = Math.max(white, cover(roundedBox(x, y, (b.x0 + b.x1) / 2, b.y, (b.x1 - b.x0) / 2, 6.5, 6.5)))
+      for (const d of dots) white = Math.max(white, cover(Math.hypot(x - d.x, y - 82) - d.r))
+      const v = Math.round(255 * white)
       const o = (j * size + i) * 4
-      px[o] = Math.round(29 + (255 - 29) * white)
-      px[o + 1] = Math.round(155 + (255 - 155) * white)
-      px[o + 2] = Math.round(240 + (255 - 240) * white)
+      px[o] = v
+      px[o + 1] = v
+      px[o + 2] = v
       px[o + 3] = Math.round(255 * bg)
     }
   }
