@@ -8,7 +8,7 @@ const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getEleme
 const fmt = new Intl.NumberFormat()
 const dateFmt = new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
 const timeFmt = new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit' })
-const KIND_LABEL = { post: 'Tweet', reply: 'Reply', repost: 'Repost', unknown: 'Tweet' } as const
+const KIND_LABEL = { post: 'Tweet', reply: 'Reply', repost: 'Retweet', unknown: 'Tweet' } as const
 
 let archive: Archive | undefined
 let selection: ArchivePost[] = []
@@ -64,7 +64,7 @@ function renderSummary(a: Archive) {
   const range = dates.length ? `${new Date(Math.min(...dates)).getFullYear()} to ${new Date(Math.max(...dates)).getFullYear()}` : 'Unknown'
   const summary = $('summary')
   summary.replaceChildren(stat(a.posts.length, 'in archive'))
-  if (a.detail === 'full') summary.append(stat(count('post'), 'tweets'), stat(count('reply'), 'replies'), stat(count('repost'), 'reposts'))
+  if (a.detail === 'full') summary.append(stat(count('post'), 'tweets'), stat(count('reply'), 'replies'), stat(count('repost'), 'retweets'))
   summary.append(stat(range, 'date range'))
 
   $('headers-note').hidden = a.detail === 'full'

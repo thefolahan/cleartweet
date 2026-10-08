@@ -16,7 +16,7 @@ Dashboard (extension page)       Service worker                    Content scrip
 ```
 
 * **Archive parsing.** Accepts the archive zip, `tweets.js` (full detail) or `tweet-headers.js` (ids and dates only). The zip is opened in the browser with fflate and only the tweet files are decompressed.
-* **Filters.** Date range, type (tweet, reply, repost), protected words, a like threshold and a list of tweets that must never be deleted. A preview shows what will go.
+* **Filters.** Date range, type (tweet, reply, retweet), protected words, a like threshold and a list of tweets that must never be deleted. A preview shows what will go.
 * **Adaptive pacing.** After each request the worker reads `x-rate-limit-remaining` and `x-rate-limit-reset` and spreads the requests left evenly across the time left in the window. When the window is spent, or X answers 429, it waits for the reset.
 * **Durable waits.** Chrome stops idle service workers after about 30 seconds, so short gaps use a timer and long waits use `chrome.alarms`. Every wake up reloads the job from storage, so nothing is lost when the worker or the browser restarts.
 * **Serialised state.** All job changes run through one queue in the worker, so pressing Pause while a request is in flight cannot be overwritten by its result.
