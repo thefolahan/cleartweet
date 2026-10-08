@@ -171,7 +171,7 @@ function fail(job: Job, id: string, message: string): void {
   job.attempt++
   if (job.attempt < MAX_ATTEMPTS) {
     const wait = backoff(job.attempt - 1)
-    addLog(job, 'warn', `Post ${id}: ${message}. Retrying in ${Math.round(wait / 1000)} s.`)
+    addLog(job, 'warn', `Tweet ${id}: ${message}. Retrying in ${Math.round(wait / 1000)} s.`)
     schedule(job, wait, 'Retrying after an error')
     return
   }
@@ -179,7 +179,7 @@ function fail(job: Job, id: string, message: string): void {
   job.failedIds.push(id)
   job.cursor++
   job.attempt = 0
-  addLog(job, 'error', `Post ${id}: ${message}. Skipped after ${MAX_ATTEMPTS} attempts.`)
+  addLog(job, 'error', `Tweet ${id}: ${message}. Skipped after ${MAX_ATTEMPTS} attempts.`)
   schedule(job, job.minDelayMs)
 }
 
@@ -214,7 +214,7 @@ async function handle(request: BackgroundRequest): Promise<void> {
       if (!job.failedIds.length) return
       const queue = await getQueue()
       await replaceQueue([...queue, ...job.failedIds])
-      addLog(job, 'info', `Queued ${job.failedIds.length} failed posts for another attempt.`)
+      addLog(job, 'info', `Queued ${job.failedIds.length} failed tweets for another attempt.`)
       job.total += job.failedIds.length
       job.failed = 0
       job.failedIds = []

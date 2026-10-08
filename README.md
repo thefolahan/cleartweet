@@ -1,27 +1,27 @@
 # Cleartweet
 
-A Chrome extension that deletes your posts on X using your data archive. It paces itself against the rate limit, so a run of many thousands of posts can go on unattended for hours or days and resume after Chrome restarts.
+A Chrome extension that deletes your tweets on X using your data archive. It paces itself against the rate limit, so a run of many thousands of tweets can go on unattended for hours or days and resume after Chrome restarts.
 
 ## Why it exists
 
-Console scripts such as [tweetXer](https://github.com/lucahammer/tweetXer) delete posts quickly, but X added a stricter rate limit in 2026, so they stall on large accounts. A pasted script also forgets everything when the tab closes. Cleartweet keeps its queue in extension storage, reads the rate limit headers on every response, and slows down before it is blocked.
+Console scripts such as [tweetXer](https://github.com/lucahammer/tweetXer) delete tweets quickly, but X added a stricter rate limit in 2026, so they stall on large accounts. A pasted script also forgets everything when the tab closes. Cleartweet keeps its queue in extension storage, reads the rate limit headers on every response, and slows down before it is blocked.
 
 ## How it works
 
 ```
 Dashboard (extension page)       Service worker                    Content script on x.com
   reads archive locally   ──►    owns the queue and the pace   ──►  sends DeleteTweet with the
-  filters, previews, starts      persists progress every post       session of the logged in user
+  filters, previews, starts      persists progress every tweet      session of the logged in user
                                  alarms for long waits         ◄──  returns result and rate headers
 ```
 
-* **Archive parsing.** Accepts the archive zip, `tweets.js` (full detail) or `tweet-headers.js` (ids and dates only). The zip is opened in the browser with fflate and only the post files are decompressed.
-* **Filters.** Date range, type (post, reply, repost), protected words, a like threshold and a list of posts that must never be deleted. A preview shows what will go.
+* **Archive parsing.** Accepts the archive zip, `tweets.js` (full detail) or `tweet-headers.js` (ids and dates only). The zip is opened in the browser with fflate and only the tweet files are decompressed.
+* **Filters.** Date range, type (tweet, reply, repost), protected words, a like threshold and a list of tweets that must never be deleted. A preview shows what will go.
 * **Adaptive pacing.** After each request the worker reads `x-rate-limit-remaining` and `x-rate-limit-reset` and spreads the requests left evenly across the time left in the window. When the window is spent, or X answers 429, it waits for the reset.
 * **Durable waits.** Chrome stops idle service workers after about 30 seconds, so short gaps use a timer and long waits use `chrome.alarms`. Every wake up reloads the job from storage, so nothing is lost when the worker or the browser restarts.
 * **Serialised state.** All job changes run through one queue in the worker, so pressing Pause while a request is in flight cannot be overwritten by its result.
 * **Self healing API calls.** X renames its GraphQL operation ids with each web release. The worker reads the current `DeleteTweet` id from the loaded bundles and looks it up again if a request returns 404.
-* **Failure handling.** Network and server errors are retried with exponential backoff, then the post is set aside for a later retry. Authentication problems stop the run and keep its place.
+* **Failure handling.** Network and server errors are retried with exponential backoff, then the tweet is set aside for a later retry. Authentication problems stop the run and keep its place.
 * **Dry run.** Walks the whole queue without calling X, which is useful for testing filters and for demos.
 
 ## Getting started
@@ -61,4 +61,4 @@ scripts/        icon generator
 
 ## Disclaimer
 
-This tool calls the same private endpoint the X web app uses. Automating it may breach the X terms of service and could lead to account limits. Deleted posts cannot be recovered. Use it at your own risk and only on your own account.
+This tool calls the same private endpoint the X web app uses. Automating it may breach the X terms of service and could lead to account limits. Deleted tweets cannot be recovered. Use it at your own risk and only on your own account.

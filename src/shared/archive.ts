@@ -12,7 +12,7 @@ export function parseYtdFile(source: string): YtdFile {
   const match = source.match(/^\s*window\.YTD\.([a-z_]+)\.part\d+\s*=\s*/)
   if (!match) throw new Error('This file does not look like part of an X data archive.')
   const items = JSON.parse(source.slice(match[0].length))
-  if (!Array.isArray(items)) throw new Error('The archive file did not contain a list of posts.')
+  if (!Array.isArray(items)) throw new Error('The archive file did not contain a list of tweets.')
   return { key: match[1], items }
 }
 
@@ -69,7 +69,7 @@ export function buildArchive(files: { name: string; text: string }[]): Archive {
   }
 
   if (!sourceFiles.length) {
-    throw new Error('No posts found. Choose tweets.js, tweet-headers.js, or the archive zip.')
+    throw new Error('No tweets found. Choose tweets.js, tweet-headers.js, or the archive zip.')
   }
 
   for (const [id, post] of headers) if (!full.has(id)) full.set(id, post)

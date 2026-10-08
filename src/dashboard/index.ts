@@ -8,7 +8,7 @@ const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getEleme
 const fmt = new Intl.NumberFormat()
 const dateFmt = new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
 const timeFmt = new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit' })
-const KIND_LABEL = { post: 'Post', reply: 'Reply', repost: 'Repost', unknown: 'Post' } as const
+const KIND_LABEL = { post: 'Tweet', reply: 'Reply', repost: 'Repost', unknown: 'Tweet' } as const
 
 let archive: Archive | undefined
 let selection: ArchivePost[] = []
@@ -47,7 +47,7 @@ async function loadFiles(files: File[]) {
   status.textContent = 'Reading your archive...'
   try {
     archive = await readArchiveFiles(files)
-    status.textContent = `Loaded ${fmt.format(archive.posts.length)} posts from ${archive.sourceFiles.join(', ')}.`
+    status.textContent = `Loaded ${fmt.format(archive.posts.length)} tweets from ${archive.sourceFiles.join(', ')}.`
     renderSummary(archive)
     $('filters-card').hidden = false
     refreshSelection()
@@ -64,7 +64,7 @@ function renderSummary(a: Archive) {
   const range = dates.length ? `${new Date(Math.min(...dates)).getFullYear()} to ${new Date(Math.max(...dates)).getFullYear()}` : 'Unknown'
   const summary = $('summary')
   summary.replaceChildren(stat(a.posts.length, 'in archive'))
-  if (a.detail === 'full') summary.append(stat(count('post'), 'posts'), stat(count('reply'), 'replies'), stat(count('repost'), 'reposts'))
+  if (a.detail === 'full') summary.append(stat(count('post'), 'tweets'), stat(count('reply'), 'replies'), stat(count('repost'), 'reposts'))
   summary.append(stat(range, 'date range'))
 
   $('headers-note').hidden = a.detail === 'full'
@@ -120,14 +120,14 @@ function refreshSelection() {
   selection = selectPosts(archive.posts, filters)
   if (filters.order === 'oldest') selection.reverse()
 
-  $('selected-count').textContent = `${fmt.format(selection.length)} of ${fmt.format(archive.posts.length)} posts will be deleted`
+  $('selected-count').textContent = `${fmt.format(selection.length)} of ${fmt.format(archive.posts.length)} tweets will be deleted`
   renderYears(archive.posts, selection)
   $('sample').replaceChildren(
     ...selection.slice(0, 50).map((p) =>
       el('li', {}, [
         el('span', { textContent: p.createdAt ? dateFmt.format(p.createdAt) : 'Unknown date' }),
         el('span', { className: 'kind', textContent: KIND_LABEL[p.kind] }),
-        el('span', { className: 'text', textContent: p.text ?? `Post ${p.id}`, title: p.text ?? '' }),
+        el('span', { className: 'text', textContent: p.text ?? `Tweet ${p.id}`, title: p.text ?? '' }),
       ]),
     ),
   )
@@ -139,7 +139,7 @@ function updateStartButton() {
   const confirmed = $<HTMLInputElement>('confirm').checked
   const start = $<HTMLButtonElement>('start')
   start.disabled = !selection.length || (!dry && !confirmed)
-  start.textContent = dry ? `Start dry run of ${fmt.format(selection.length)} posts` : `Delete ${fmt.format(selection.length)} posts`
+  start.textContent = dry ? `Start dry run of ${fmt.format(selection.length)} tweets` : `Delete ${fmt.format(selection.length)} tweets`
 }
 
 async function startJob() {
@@ -165,7 +165,7 @@ function render(job: Job | undefined) {
   $('bar-fill').style.width = `${pct}%`
 
   const titles: Record<Job['status'], string> = {
-    running: job.dryRun ? 'Dry run in progress' : 'Deleting your posts',
+    running: job.dryRun ? 'Dry run in progress' : 'Deleting your tweets',
     waiting: 'Waiting for X',
     paused: 'Paused',
     done: job.dryRun ? 'Dry run complete' : 'All done',

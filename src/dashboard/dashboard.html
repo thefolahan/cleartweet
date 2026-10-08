@@ -42,9 +42,9 @@
           <h2><span class="step">02</span> Choose what to delete</h2>
 
           <div class="stats" id="summary"></div>
-          <div class="years" id="years" aria-label="Posts per year"></div>
+          <div class="years" id="years" aria-label="Tweets per year"></div>
           <p id="headers-note" class="note" hidden>
-            This file only lists post ids and dates, so filtering by type, words or likes is unavailable. Use
+            This file only lists tweet ids and dates, so filtering by type, words or likes is unavailable. Use
             <code>tweets.js</code> for the full set of filters.
           </p>
 
@@ -54,17 +54,17 @@
 
             <fieldset class="full rich">
               <legend>Types</legend>
-              <label class="check"><input type="checkbox" name="post" checked /> Posts</label>
+              <label class="check"><input type="checkbox" name="post" checked /> Tweets</label>
               <label class="check"><input type="checkbox" name="reply" checked /> Replies</label>
               <label class="check"><input type="checkbox" name="repost" checked /> Reposts</label>
             </fieldset>
 
             <label class="full rich">
-              Keep posts that contain any of these words
+              Keep tweets that contain any of these words
               <input type="text" name="keepWords" placeholder="launch, hired, thank you" />
             </label>
             <label class="rich">
-              Keep posts with at least this many likes
+              Keep tweets with at least this many likes
               <input type="number" name="keepLikes" min="0" placeholder="No limit" />
             </label>
             <label>
@@ -75,7 +75,7 @@
               </select>
             </label>
             <label class="full">
-              Never delete these posts (paste links or ids)
+              Never delete these tweets (paste links or ids)
               <textarea name="keepIds" rows="2" placeholder="https://x.com/you/status/1234567890"></textarea>
             </label>
           </form>
@@ -95,7 +95,7 @@
               </select>
             </label>
             <label class="check"><input type="checkbox" id="dry-run" /> Dry run (walk through the list without deleting)</label>
-            <label class="check full"><input type="checkbox" id="confirm" /> I understand that deleted posts cannot be recovered.</label>
+            <label class="check full"><input type="checkbox" id="confirm" /> I understand that deleted tweets cannot be recovered.</label>
           </div>
 
           <button id="start" class="primary" disabled>Start deleting</button>
@@ -117,7 +117,7 @@
 
           <div class="actions">
             <button id="toggle" class="primary">Pause</button>
-            <button id="retry" hidden>Retry failed posts</button>
+            <button id="retry" hidden>Retry failed tweets</button>
             <button id="reset" class="ghost">Start over</button>
           </div>
           <p class="note">Keep Chrome open. The X tab can stay in the background, and a closed browser picks up where it stopped.</p>

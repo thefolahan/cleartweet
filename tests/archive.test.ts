@@ -48,7 +48,7 @@ describe('buildArchive', () => {
   })
 
   it('ignores unrelated archive files and fails when nothing is left', () => {
-    expect(() => buildArchive([{ name: 'like.js', text: 'window.YTD.like.part0 = []' }])).toThrow(/No posts found/)
+    expect(() => buildArchive([{ name: 'like.js', text: 'window.YTD.like.part0 = []' }])).toThrow(/No tweets found/)
   })
 })
 
